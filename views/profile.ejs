@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: white;
+            color: black;
+            margin: 0;
+            padding: 0;
+        }
+        .profile-container {
+            width: 50%;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px black;
+        }
+        h1 {
+            color: blue;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        header,
+        footer {
+            background: cornflowerblue;
+            color: black;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/flights">Flights</a>
+            <a href="/hotels">Hotels</a>
+            <a href="/profile">Profile</a>
+            <a href="/support">Support</a>
+        </nav>
+    </header>
+    <div class="profile-container">
+        <h1><%= title %></h1>
+        <% if (!user && !showCreateForm && !showViewForm && !showBookingForm) { %>
+        <button
+            onclick="document.getElementById('createForm').style.display='block'; document.getElementById('viewForm').style.display='none'; document.getElementById('viewBookingsForm').style.display='none';"
+        >
+            Create Profile
+        </button>
+        <button
+            onclick="document.getElementById('viewForm').style.display='block'; document.getElementById('createForm').style.display='none'; document.getElementById('viewBookingsForm').style.display='none';"
+        >
+            View Profile
+        </button>
+        <button
+            onclick="document.getElementById('viewBookingsForm').style.display='block'; document.getElementById('createForm').style.display='none'; document.getElementById('viewForm').style.display='none';"
+        >
+            View Bookings
+        </button>
+        <% } %>
+        <% if (user && user.username) { %>
+        <p>Username: <%= user.username %></p>
+        <p>Email: <%= user.email %></p>
+        <p>First Name: <%= user.first_name %></p>
+        <p>Last Name: <%= user.last_name %></p>
+        <p>Phone Number: <%= user.phone_number %></p>
+        <a href="/">Back to Home</a>
+        <a href="/profile">Create Another Profile</a>
+        <form action="/profile/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete your profile?');">
+            <input type="hidden" name="username" value="<%= user ? user.username : '' %>">
+            <button type="submit">Delete Profile</button>
+        </form>
+        <form action="/profile/delete-bookings" method="POST" onsubmit="return confirm('Are you sure you want to delete all your bookings?');">
+            <input type="hidden" name="username" value="<%= user ? user.username : '' %>">
+            <button type="submit">Delete Bookings</button>
+        </form>
+        <% } else { %>
+        <form
+            id="createForm"
+            action="/profile"
+            method="post"
+            style="display: <%= showCreateForm ? 'block' : 'none' %>;"
+        >
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required />
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required />
+            </div>
+            <div class="form-group">
+                <label for="first_name">First Name:</label>
+                <input type="text" id="first_name" name="first_name" required />
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name:</label>
+                <input type="text" id="last_name" name="last_name" required />
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required />
+            </div>
+            <div class="form-group">
+                <label for="phone_number">Phone Number:</label>
+                <input type="text" id="phone_number" name="phone_number" required />
+            </div>
+            <button type="submit">Create Profile</button>
+        </form>
+
+        <form
+            id="viewForm"
+            action="/profile/view"
+            method="get"
+            style="display: <%= showViewForm ? 'block' : 'none' %>;"
+        >
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required />
+            </div>
+            <button type="submit">View Profile</button>
+        </form>
+
+        <form
+            id="viewBookingsForm"
+            action="/profile/view-bookings"
+            method="get"
+            style="display: <%= showBookingForm ? 'block' : 'none' %>;"
+        >
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required />
+            </div>
+            <button type="submit">View Bookings</button>
+        </form>
+        <% } %>
+
+        <% if (flightBookings && flightBookings.length > 0) { %>
+        <h2>Flight Bookings</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Airline</th>
+                    <th>Flight Number</th>
+                    <th>Departure Airport</th>
+                    <th>Arrival Airport</th>
+                    <th>Departure Time</th>
+                    <th>Arrival Time</th>
+                    <th>Seat Number</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% flightBookings.forEach(booking => { %>
+                <tr>
+                    <td><%= booking.airline %></td>
+                    <td><%= booking.flight_number %></td>
+                    <td><%= booking.departure_airport %></td>
+                    <td><%= booking.arrival_airport %></td>
+                    <td><%= booking.departure_time %></td>
+                    <td><%= booking.arrival_time %></td>
+                    <td><%= booking.seat_number %></td>
+                    <td><%= booking.total_price %></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <% } %>
+
+        <% if (hotelBookings && hotelBookings.length > 0) { %>
+        <h2>Hotel Bookings</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Hotel Name</th>
+                    <th>Room Type</th>
+                    <th>Check-in Date</th>
+                    <th>Check-out Date</th>
+                    <th>Number of Guests</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% hotelBookings.forEach(booking => { %>
+                <tr>
+                    <td><%= booking.hotel_name %></td>
+                    <td><%= booking.room_type %></td>
+                    <td><%= booking.check_in_date %></td>
+                    <td><%= booking.check_out_date %></td>
+                    <td><%= booking.num_guests %></td>
+                    <td><%= booking.total_price %></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <% } %>
+    </div>
+    <footer>
+        <p><a href="/support">Support</a></p>
+    </footer>
+</body>
+</html>

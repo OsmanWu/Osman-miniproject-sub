@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      img {
+        width: 200px; /* Adjust width as needed */
+        height: 200px; /* Adjust height as needed */
+  
+        object-fit: contain;
+      }
+      header,
+      footer {
+        background: cornflowerblue;
+        color: white;
+        padding: 10px 0;
+        text-align: center;
+      }
+
+      nav a {
+        color: white;
+        margin: 0 10px;
+        text-decoration: none;
+      }
+      main {
+        padding: 20px;
+      }
+      footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+      }
+      form {
+        margin: 20px 0;
+      }
+      form input,
+      form select,
+      form button {
+        margin: 10px;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/flights">Flights</a>
+        <a href="/hotels">Hotels</a>
+        <a href="/profile">Profile</a>
+        <a href="/support">Support</a>
+      </nav>
+    </header>
+    <main><%- body %></main>
+    <footer>
+      <p><a href="/support">Support</a></p>
+    </footer>
+  </body>
+</html>
